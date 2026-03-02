@@ -1,0 +1,60 @@
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "products")
+public class Product {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    private String name;
+    private double price;
+
+    public Product() {}
+
+    public Product(String name, double price) {
+        this.name = name;
+        this.price = price;
+    }
+
+    // Getter và Setter
+    public int getId() { return id; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
+}
+
+
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+
+public class Bai3_SaveProduct {
+    public static void main(String[] args) {
+
+        SessionFactory factory = new Configuration()
+                .configure("hibernate.cfg.xml")
+                .addAnnotatedClass(Product.class)
+                .buildSessionFactory();
+
+        Session session = factory.getCurrentSession();
+
+        try {
+            Product product = new Product("Laptop", 1500);
+
+            session.beginTransaction();
+            session.save(product);
+            session.getTransaction().commit();
+
+            System.out.println("Lưu sản phẩm thành công!");
+
+        } finally {
+            factory.close();
+        }
+    }
+}
