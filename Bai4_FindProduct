@@ -1,0 +1,35 @@
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import java.util.List;
+
+public class Bai4_FindProduct {
+    public static void main(String[] args) {
+
+        SessionFactory factory = new Configuration()
+                .configure("hibernate.cfg.xml")
+                .addAnnotatedClass(Product.class)
+                .buildSessionFactory();
+
+        Session session = factory.getCurrentSession();
+
+        try {
+            session.beginTransaction();
+
+            List<Product> products = session
+                    .createQuery("FROM Product p WHERE p.price > 1000", Product.class)
+                    .getResultList();
+
+            for (Product p : products) {
+                System.out.println(p.getId() + " - " 
+                                   + p.getName() + " - " 
+                                   + p.getPrice());
+            }
+
+            session.getTransaction().commit();
+
+        } finally {
+            factory.close();
+        }
+    }
+}
